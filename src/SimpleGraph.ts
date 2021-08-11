@@ -5,31 +5,33 @@ class SimpleGraph {
     this._graph = new Map();  
   }
 
-  addVertex (key: string | Array<string>):boolean {
-    if (typeof key === 'string') this._graph.set(key, new Set());
-    else key.forEach(key => this._graph.set(key, new Set()));
+  addVertex (...keys:Array<string>):boolean {
+    keys.forEach((key:string) => this._graph.set(key, new Set()));
     return true;
   }
 
-  removeVertex (key: string):boolean {
-    this._graph.get(key).forEach(adjacent => this.removeEdge(adjacent, key) );
-    this._graph.delete(key);
+  removeVertex (...keys:Array<string>):boolean {
+    keys.forEach((vertex:string) => {
+      this._graph.get(vertex).forEach(edge => this.removeEdge(edge, vertex) );
+      this._graph.delete(vertex);
+    });
     return true;
   }
 
-  addEdge (from:string, to:string, directed:boolean = true):boolean {
+  addEdge (from:string, to:string, undirected:boolean = false):boolean {
     if(from === to) throw new Error('From and to cannot be the same.');
     this._graph.get(from).add(to);
-    if (!directed) this._graph.get(to).add(from);
+    if (undirected) this._graph.get(to).add(from);
     return true;
   }
   
-  removeEdge (from:string, to:string):boolean {
+  removeEdge (from:string, to:string, undirected:boolean = false):boolean {
     this._graph.get(from).delete(to);
+    if (undirected) this._graph.get(to).delete(from);
     return true;
   }
 
-  connected (start:string, end:string):boolean {
+  isConnected (start:string, end:string):boolean {
     if(!this._graph.has(start)) throw new Error(`Graph does not contain '${start}'.`);
     if(!this._graph.has(end)) throw new Error(`Graph does not contain '${end}'.`);
     if(start === end) throw new Error(`'start' and 'end' cannot be the same.`);

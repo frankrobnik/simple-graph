@@ -2,31 +2,32 @@ class SimpleGraph {
     constructor() {
         this._graph = new Map();
     }
-    addVertex(key) {
-        if (typeof key === 'string')
-            this._graph.set(key, new Set());
-        else
-            key.forEach(key => this._graph.set(key, new Set()));
+    addVertex(...keys) {
+        keys.forEach((key) => this._graph.set(key, new Set()));
         return true;
     }
-    removeVertex(key) {
-        this._graph.get(key).forEach(adjacent => this.removeEdge(adjacent, key));
-        this._graph.delete(key);
+    removeVertex(...keys) {
+        keys.forEach((vertex) => {
+            this._graph.get(vertex).forEach(edge => this.removeEdge(edge, vertex));
+            this._graph.delete(vertex);
+        });
         return true;
     }
-    addEdge(from, to, directed = true) {
+    addEdge(from, to, undirected = false) {
         if (from === to)
             throw new Error('From and to cannot be the same.');
         this._graph.get(from).add(to);
-        if (!directed)
+        if (undirected)
             this._graph.get(to).add(from);
         return true;
     }
-    removeEdge(from, to) {
+    removeEdge(from, to, undirected = false) {
         this._graph.get(from).delete(to);
+        if (undirected)
+            this._graph.get(to).delete(from);
         return true;
     }
-    connected(start, end) {
+    isConnected(start, end) {
         if (!this._graph.has(start))
             throw new Error(`Graph does not contain '${start}'.`);
         if (!this._graph.has(end))
