@@ -1,16 +1,26 @@
 var should = require('chai').should();
 
-const simpleGraph = require('../SimpleGraph.js');
-
-console.log('test something');
-
+const SimpleGraph = require('../js/SimpleGraph.js');
 
 describe('Circular detector', function () {
 
-  it('should add vertices to graph', function() {});
-
-  it('should remove vertices from graph', function() {});
+  let graph;
   
-  it('should check if a and b are connected or not', function() {});
+  beforeEach(function () {
+    graph = new SimpleGraph();
+    graph.addVertex(['A', 'B', 'C', 'D', 'E']);
+    graph.addVertex('X');
+    graph.addEdge('A','B');
+    graph.addEdge('A','D');
+    graph.addEdge('B','C');
+    graph.addEdge('C','D');
+    graph.addEdge('D','E');
+  });
+
+  it('should check if two nodes are connected or not.', function() {
+    graph.connected('A','B').should.be.true;
+    graph.connected('A','C').should.be.true;
+    graph.connected('B','X').should.be.false;
+  });
  
 });
